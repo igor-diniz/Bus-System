@@ -17,7 +17,7 @@ class FileReader {
     void readLine(const string& line);
     void readPaths();
     void readPath(const string& line, ifstream &file);
-    void calculatePossibleFeetPaths(double distance);
+    //void calculatePossibleFeetPaths(double distance);
 public:
     FileReader();
     Graph* load();

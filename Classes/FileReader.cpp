@@ -5,8 +5,22 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
+int calculateNumberOfStops(){
+    std::ifstream inFile("../dataset/stops.csv");
+    return std::count(std::istreambuf_iterator<char>(inFile),
+                      std::istreambuf_iterator<char>(), '\n') - 1;
+}
+
+FileReader::FileReader() {
+    int numberStops = calculateNumberOfStops();
+    cout << "Number of stops detected: " << numberStops << endl;
+
+    graph = new Graph(calculateNumberOfStops(), true);
+    CodeID = new unordered_map<string, int>(numberStops);
+}
 
 string FileReader::path = "../dataset/";
 
@@ -38,7 +52,7 @@ void FileReader::readStop(const string &line, int id){
     getline(reader, zone, ',');
     reader >> latitude >> separator >> longitude;
 
-    graph->setNodeInfo(id, name, zone, latitude, longitude); //TODO setNodeInfo na classe graph
+    graph->setNodeInfo(id, name, zone, latitude, longitude);
     CodeID->insert({code, id}); // os códigos do ficheiro stops.csv são mapeados para um id
 }
 
@@ -106,8 +120,7 @@ void FileReader::readPath(const string& line, ifstream &file) {
         int sourceID = CodeID->at(source);
         int destID = CodeID->at(dest);
 
-        auto pair1 = graph->getCoordinates(sourceID); //TODO getCoordinates
-        //TODO retorna um pair<double, double> latitude e longitude a partir do ID fornecido
+        auto pair1 = graph->getCoordinates(sourceID);
         auto pair2 = graph->getCoordinates(destID);
 
         graph->addEdge(sourceID, destID, line,
@@ -118,4 +131,12 @@ void FileReader::readPath(const string& line, ifstream &file) {
 
         source = dest;
     }
+}
+
+Graph* FileReader::load() {
+    readStops();
+    readLines();
+    readPaths();
+    //calculatePossibleFeetPaths(.2); // 250 meters
+    return graph;
 }
