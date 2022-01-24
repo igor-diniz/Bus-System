@@ -1,9 +1,13 @@
-//
-// Created by duart on 24/01/2022.
-//
-
+#include <dirent.h>
+#include <list>
+#include <string>
 #include <iostream>
+#include <FileReader.h>
 
-int main(int argc, char* argv[]) {
-    std::cout << 3/2;
+using namespace std;
+
+int main(void) {
+    FileReader f;
+    f.fillListOfFiles();
+    return(0);
 }

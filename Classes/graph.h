@@ -17,7 +17,7 @@ class Graph {
                     //sendo line = CODE
                     //
         int dest;   // Destination node, read from LINE_CODE_DIR.CSV
-        int weight; // An integer weight, default value, talvez distãncia entre eles?
+        double weight; // An integer weight, default value, talvez distãncia entre eles?
         string line; // line cod from lines.csv
         string name; // name from lines.csv
         bool isNight; // se a linha é noturna
@@ -43,14 +43,17 @@ class Graph {
     void dijkstra(int s);
 
 public:
-    void addEdge(string sourceCode, string destCode, string lineCode,string lineName,bool isNight);
-
-
     // Constructor: nr nodes and direction (default: undirected)
     Graph(int nodes, bool dir = false);
 
     // Add edge from source to destination with a certain weight
-    void addEdge(int src, int dest, int weight = 1);
+    void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude);
+    void addEdge(int src, int dest, const string &line = "", double weight = 0);
+
+    pair<double,double> getCoordinates(int node);
+
+    typedef pair<int,pair<int,double>> edgeInfo;
+    vector<edgeInfo> edges; // {source, {destiny, weight} }
 
     // ----- Functions to implement in this class -----
     int dijkstra_distance(int a, int b);

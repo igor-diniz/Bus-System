@@ -3,6 +3,9 @@
 
 #include "graph.h"
 #include <climits>
+#include <string>
+
+using namespace std;
 
 #define INF (INT_MAX/2)
 
@@ -11,10 +14,26 @@ Graph::Graph(int num, bool dir) : n(num), hasDir(dir), nodes(num+1) {
 }
 
 // Add edge from source to destination with a certain weight
-void Graph::addEdge(int src, int dest, int weight) {
-    if (src<1 || src>n || dest<1 || dest>n) return;
-    nodes[src].adj.push_back({dest, weight});
+void Graph::addEdge(int src, int dest, const string& line, double weight) {
+    if (src<0 || src>n-1 || dest<0 || dest>n-1){
+        cout << "Can't add the edge." << endl;
+        return;
+    }
+    nodes[src].adj.push_back({dest, weight, line});
     if (!hasDir) nodes[dest].adj.push_back({src, weight});
+    edges.push_back({src, {dest, weight}});
+}
+
+
+pair<double, double> Graph::getCoordinates(int node) {
+    return {nodes[node].latitude, nodes[node].longitude};
+}
+
+void Graph::setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude) {
+    nodes[id].name = name;
+    nodes[id].zone = zone;
+    nodes[id].latitude = latitude;
+    nodes[id].longitude = longitude;
 }
 
 
@@ -70,4 +89,8 @@ void Graph::dijkstra(int s) {
             }
         }
     }
+}
+
+void readFile(string fileName)
+{
 }
