@@ -180,3 +180,7 @@ cmake-build-debug/CMakeFiles/3.20.2/CMakeDetermineCompilerABI_CXX.bin
 cmake-build-debug/CMakeFiles/3.20.2/CMakeDetermineCompilerABI_C.bin
 cmake-build-debug/CMakeCache.txt
 cmake-build-debug/cmake_install.cmake
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/Bus-System.iml
