@@ -18,7 +18,7 @@ FileReader::FileReader() {
     int numberStops = calculateNumberOfStops();
     cout << "Number of stops detected: " << numberStops << endl;
 
-    graph = new Graph(calculateNumberOfStops(), true);
+    graph = new Graph(calculateNumberOfStops() + 2, true); // 2 a mais pq esses espaços vao ser usados para os calculos
     CodeID = new unordered_map<string, int>(numberStops);
 }
 
@@ -81,7 +81,7 @@ void FileReader::readLine(const string &line) {
     codeNameOfLines.insert({code, name});
 }
 
-double applyHaversine(double lat1, double lon1, double lat2, double lon2){
+double FileReader::applyHaversine(double lat1, double lon1, double lat2, double lon2){
     double dLat = (lat2 - lat1) * M_PI / 180.0;
     double dLon = (lon2 - lon1) * M_PI / 180.0;
 
@@ -137,6 +137,25 @@ Graph* FileReader::load() {
     readStops();
     readLines();
     readPaths();
-    //calculatePossibleFeetPaths(.2); // 250 meters
+    calculatePossibleFeetPaths(0); // isso ainda vai ser pedido pro usuario, tlvz dps mande isso pro graph
+    graph->setCodeIDInfos(*CodeID);
+    graph->setCodeNameOfLinesInfos(codeNameOfLines);
     return graph;
 }
+
+void FileReader::calculatePossibleFeetPaths(double distance) {
+    for(int i = 0; i < graph->size() - 1; i++){
+        for(int j = i + 1; j < graph->size(); j++){
+            auto pair1 = graph->getCoordinates(i);
+            auto pair2 = graph->getCoordinates(j);
+            double d = applyHaversine(
+                    pair1.first, pair1.second,
+                    pair2.first, pair2.second);
+
+            if(d <= distance)
+                graph->addEdge(i, j, "feet", distance);
+        }
+    }
+}
+
+

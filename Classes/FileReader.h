@@ -8,8 +8,8 @@
 class FileReader {
     static string path;
     Graph* graph;
-    unordered_map<string, int>* CodeID;
-    unordered_map<string, string> codeNameOfLines;
+    unordered_map<string, int>* CodeID; // codigo da parada e seu id
+    unordered_map<string, string> codeNameOfLines; // codigo da linha e seu nome
 
     void readStops();
     void readStop(const string& line, int id);
@@ -17,10 +17,12 @@ class FileReader {
     void readLine(const string& line);
     void readPaths();
     void readPath(const string& line, ifstream &file);
-    //void calculatePossibleFeetPaths(double distance);
+    void calculatePossibleFeetPaths(double distance);
 public:
     FileReader();
     Graph* load();
+
+    double applyHaversine(double lat1, double lon1, double lat2, double lon2);
 };
 
 
