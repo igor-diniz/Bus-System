@@ -9,6 +9,7 @@
 #include <list>
 #include <iostream>
 #include <map>
+#include <set>
 
 using namespace std;
 
@@ -31,7 +32,7 @@ class Graph {
         string zone; //zone of stops.csv
         double latitude; //latitude of stops.csv
         double longitude; //longitude of stops.csv
-        int dist; //starts on -1, distancia de um nó a outro (usado no dijkstra)
+        double dist; //starts on -1, distancia de um nó a outro (usado no dijkstra)
         int pred; //starts on -1, nó que deu origem (usado no dijkstra)
         //string code; //code of stops.csv
     };
@@ -82,6 +83,14 @@ public:
     list<string> bfsPath();
 
     void addCoordinatesEdge(int i, double d);
+
+    bool checkLine(int v, std::set<string> &zonesPassed);
+
+    void lessZones(int s);
+
+    list<string> lessZonesPath();
+
+    list<string> lessDistance();
 };
 
 #endif

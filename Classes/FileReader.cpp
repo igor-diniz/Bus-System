@@ -93,7 +93,7 @@ double FileReader::applyHaversine(double lat1, double lon1, double lat2, double 
                cos(lat1) * cos(lat2);
     double rad = 6371;
     double c = 2 * asin(sqrt(a));
-    return rad * c;
+    return rad * c * 1000;
 }
 
 void FileReader::readPaths() {

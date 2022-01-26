@@ -6,7 +6,7 @@
 #include <string>
 #include <cmath>
 #include <queue>
-
+#include <set>
 using namespace std;
 
 #define INF (INT_MAX/2)
@@ -72,7 +72,7 @@ list<int> Graph::dijkstra_path(int a, int b) {
     return path;
 }
 
-list<string>Graph::bfsPath()
+list<string> Graph::bfsPath()
 {
     bfs(src);
     list<string> path;
@@ -85,6 +85,22 @@ list<string>Graph::bfsPath()
         /*cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
         cout << nodes[v].name << endl;*/
         v = nodes[v].pred;
+        path.push_front(nodes[v].name);
+    }
+    return path;
+}
+
+list<string> Graph::lessDistance()
+{
+    dijkstra(src);
+    list<string> path;
+    cout << nodes[dest].dist << endl;
+    if (nodes[dest].dist == INF) return path;
+    path.push_back(nodes[dest].name);
+    int v = dest;
+    while (v != src) {
+        v = nodes[v].pred;
+        cout << nodes[v].dist << " " << nodes[v].name << endl;
         path.push_front(nodes[v].name);
     }
     return path;
@@ -140,8 +156,8 @@ void Graph::addCoordinatesEdge(int v, double distance)
 
 
 void Graph::dijkstra(int s) {
-    MinHeap<int, int> q(n, -1);
-    for (int v=1; v<=n; v++) {
+    MinHeap<int, double> q(n, -1);
+    for (int v=0; v<n; v++) {
         nodes[v].dist = INF;
         q.insert(v, INF); //priority queue
         nodes[v].visited = false;
@@ -153,8 +169,61 @@ void Graph::dijkstra(int s) {
         int u = q.removeMin();
         // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
         nodes[u].visited = true;
+        for (auto &e : nodes[u].adj) {
+            int v = e.dest;
+            double w = e.weight;
+            if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
+                nodes[v].dist = nodes[u].dist + w;
+                q.decreaseKey(v, nodes[v].dist);
+                nodes[v].pred = u;
+            }
+        }
+    }
+}
+
+list<string>Graph::lessZonesPath()
+{
+    lessZones(src);
+    list<string> path;
+    if(!nodes[dest].visited) return path;
+    path.push_back(nodes[dest].name);
+    // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
+    cout << nodes[dest].dist + 1 << " zone(s) passed" << endl;
+    int v = dest;
+    while(v != src)
+    {
+       //cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
+        cout << nodes[v].name << endl << nodes[v].zone << endl;
+        v = nodes[v].pred;
+        path.push_front(nodes[v].name);
+    }
+    return path;
+}
+
+void Graph::lessZones(int s)
+{
+    MinHeap<int, int> q(n, -1);
+    for (int v=1; v<=n; v++) {
+        nodes[v].dist = INF;
+        q.insert(v, nodes[v].dist); //priority queue
+        nodes[v].visited = false;
+    }
+    nodes[s].dist = 0;
+    q.decreaseKey(s, 0);
+    nodes[s].pred = s;
+    while (q.getSize()>0) {
+        int u = q.removeMin();
+        // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
+        nodes[u].visited = true;
         for (auto e : nodes[u].adj) {
             int v = e.dest;
+            if(nodes[v].zone == nodes[u].zone)
+                e.weight = 0;
+
+            else
+                e.weight = 1;
+
+            string zone = nodes[u].zone;
             int w = e.weight;
             if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
                 nodes[v].dist = nodes[u].dist + w;
@@ -200,13 +269,16 @@ void Graph::localByCoordinates(double x, double y, double distance) {
     {
         cout << a.dest << " " << a.line << nodes[a.dest].name << endl;
     }*/
-    //generatePossibleFeetPaths(distance);
+    generatePossibleFeetPaths(distance);
 }
 
 void Graph::localByName(string name, double distance)
 {
     if(codeID.find(name) == codeID.end()) cerr << "name of the stop is invalid!" << endl;
-    src = codeID[name];
+    src = n - 2;
+    cout << nodes[codeID[name]].name << " " << nodes[codeID[name]].latitude << " " << nodes[codeID[name]].longitude << endl;
+    setNodeInfo(src,"origin","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude);
+    addCoordinatesEdge(src,distance);
     //nodes[n-1] = nodes[codeID[name]];
     //setNodeInfo(n-1,"initial","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
     generatePossibleFeetPaths(distance);
@@ -227,10 +299,12 @@ void Graph::destByCoordinates(double x, double y, double distance) {
 void Graph::destByName(string name, double distance)
 {
     if(codeID.find(name) == codeID.end()) cerr << "name of the stop is invalid!" << endl;
-    dest = codeID[name];
+    dest = n - 1;
+    setNodeInfo(dest,"destination","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude);
     //nodes[n] = nodes[codeID[name]];
     //setNodeInfo(n,"destination","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
     //generatePossibleFeetPaths(distance);
+    addCoordinatesEdge(dest,distance);
 }
 
 void Graph::lessStops()
