@@ -7,13 +7,13 @@ int main(void) {
     FileReader f;
     Graph* g = f.load();
     list<string> a;
-    //g->localByCoordinates(41.2166 ,-8.5536,200);
-    //g->destByCoordinates(41.14954216,-8.610023615,200);
+    g->localByCoordinates(41.2166 ,-8.5536,200);
+    g->destByCoordinates(41.14954216,-8.610023615,200);
     g->localByName("ERM3",200);
     g->destByName("1AL2",200);
-    //a = g->lessZonesPath(); // menos zonas
-    //a = g->bfsPath(); // menos paragens
-    a = g->lessDistance();
+    a = g->lessZonesPath(); // menos zonas
+    a = g->bfsPath(); // menos paragens
+    a = g->lessDistance(); // menor distancia
 
     for(auto i: a)
     {

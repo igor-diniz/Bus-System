@@ -14,6 +14,7 @@ class App
     FileReader fileReader;
 public:
     App() {graph = fileReader.load();};
+    void run();
 
 };
 

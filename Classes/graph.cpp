@@ -200,9 +200,53 @@ list<string>Graph::lessZonesPath()
     return path;
 }
 
+/*list<string>Graph::lessLinesPath()
+{
+    lessLines(src);
+}*/
+
+/*void Graph::lessLines(int s) // fazer
+{
+    MinHeap<int, double> q(n, -1);
+    for (int v=1; v<=n; v++) {
+        nodes[v].dist = INF;
+        q.insert(v, nodes[v].dist); //priority queue
+        nodes[v].visited = false;
+    }
+    nodes[s].dist = 0;
+    q.decreaseKey(s, 0);
+    nodes[s].pred = s;
+    while (q.getSize()>0) {
+        int u = q.removeMin();
+        // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
+        set<string> usedLines;
+        usedLines.clear();
+        nodes[u].visited = true;
+        for (auto e : nodes[u].adj) {
+            int v = e.dest;
+            if(usedLines.find(e.line) == usedLines.end())
+            {
+                e.weight = 1;
+                usedLines.insert(e.line);
+            }
+            else
+            {
+                e.weight = 0;
+            }
+
+            double w = e.weight;
+            if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
+                nodes[v].dist = nodes[u].dist + w;
+                q.decreaseKey(v, nodes[v].dist);
+                nodes[v].pred = u;
+            }
+        }
+    }
+}*/
+
 void Graph::lessZones(int s)
 {
-    MinHeap<int, int> q(n, -1);
+    MinHeap<int, double> q(n, -1);
     for (int v=1; v<=n; v++) {
         nodes[v].dist = INF;
         q.insert(v, nodes[v].dist); //priority queue
@@ -223,8 +267,7 @@ void Graph::lessZones(int s)
             else
                 e.weight = 1;
 
-            string zone = nodes[u].zone;
-            int w = e.weight;
+            double w = e.weight;
             if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
                 nodes[v].dist = nodes[u].dist + w;
                 q.decreaseKey(v, nodes[v].dist);
@@ -240,7 +283,7 @@ void Graph::setCodeNameOfLinesInfos(unordered_map<string, string> &codeNameOfLin
 
 void Graph::bfs(int v) {
 // initialize all nodes as unvisited
-    for (int v=1; v<=n; v++) nodes[v]. visited = false;
+    for (int i=0; i<n; i++) nodes[i].visited = false;
     queue <int> q; // queue of unvisited nodes
     q.push(v);
     nodes[v].pred = v;
@@ -248,7 +291,7 @@ void Graph::bfs(int v) {
     while (!q.empty ()) { // while there are still unprocessed nodes
         int u = q.front(); q.pop(); // remove first element of q
       //  cout << u << " "; // show node order
-        for (auto e : nodes[u]. adj) {
+        for (auto &e : nodes[u]. adj) {
             int w = e.dest;
             if (! nodes[w]. visited) { // new node!
                 q.push(w);
@@ -307,12 +350,4 @@ void Graph::destByName(string name, double distance)
     addCoordinatesEdge(dest,distance);
 }
 
-void Graph::lessStops()
-{
-   // return bfsPath();
-}
-
-void readFile(string fileName)
-{
-}
 

@@ -70,7 +70,6 @@ public:
 
     void localByName(string name, double distance);
 
-    void lessStops();
 
     void bfs(int v);
 
@@ -78,13 +77,9 @@ public:
 
     void destByName(string name, double distance);
 
-    list<int> BFSPath();
-
     list<string> bfsPath();
 
     void addCoordinatesEdge(int i, double d);
-
-    bool checkLine(int v, std::set<string> &zonesPassed);
 
     void lessZones(int s);
 
