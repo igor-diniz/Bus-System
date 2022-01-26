@@ -137,13 +137,13 @@ Graph* FileReader::load() {
     readStops();
     readLines();
     readPaths();
-    calculatePossibleFeetPaths(0); // isso ainda vai ser pedido pro usuario, tlvz dps mande isso pro graph
+    //calculatePossibleFeetPaths(0); // isso ainda vai ser pedido pro usuario, tlvz dps mande isso pro graph
     graph->setCodeIDInfos(*CodeID);
     graph->setCodeNameOfLinesInfos(codeNameOfLines);
     return graph;
 }
 
-void FileReader::calculatePossibleFeetPaths(double distance) {
+/*void FileReader::calculatePossibleFeetPaths(double distance) {
     for(int i = 0; i < graph->size() - 1; i++){
         for(int j = i + 1; j < graph->size(); j++){
             auto pair1 = graph->getCoordinates(i);
@@ -156,6 +156,6 @@ void FileReader::calculatePossibleFeetPaths(double distance) {
                 graph->addEdge(i, j, "feet", distance);
         }
     }
-}
+}*/
 
 

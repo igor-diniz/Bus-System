@@ -78,9 +78,12 @@ list<string>Graph::bfsPath()
     list<string> path;
     if(!nodes[dest].visited) return path;
     path.push_back(nodes[dest].name);
+   // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
     int v = dest;
     while(v != src)
     {
+        /*cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
+        cout << nodes[v].name << endl;*/
         v = nodes[v].pred;
         path.push_front(nodes[v].name);
     }
@@ -113,10 +116,28 @@ void Graph::generatePossibleFeetPaths(double distance)
                     pair2.first, pair2.second);
 
             if(d <= distance)
-                addEdge(i, j, "feet", distance); //como distancia vai ser usada pra calcular o peso, colocar distancia aqui a 0
+                addEdge(i, j, "feet", d);
         }
     }
 }
+
+void Graph::addCoordinatesEdge(int v, double distance)
+{
+    auto pair1 = getCoordinates(v);
+    for(int i = 0; i < n -1; i++)
+    {
+        auto pair2 = getCoordinates(i);
+        double d = applyHaversine(
+                pair1.first, pair1.second,
+                pair2.first, pair2.second);
+        if(d <= distance && v != i)
+        {
+            addEdge(i, v, "feet", d);
+            addEdge(v, i, "feet", d);
+        }
+    }
+}
+
 
 void Graph::dijkstra(int s) {
     MinHeap<int, int> q(n, -1);
@@ -170,10 +191,16 @@ void Graph::bfs(int v) {
 }
 
 
-void Graph::localByCoordinates(int x,int y,double distance) {
+void Graph::localByCoordinates(double x, double y, double distance) {
 
-    setNodeInfo(n-1,"initial","",x,y);
-    generatePossibleFeetPaths(distance);
+    src = n - 2;
+    setNodeInfo(src,"initial","",x,y);
+    addCoordinatesEdge(src,distance);
+    /*for(auto a: nodes[src].adj)
+    {
+        cout << a.dest << " " << a.line << nodes[a.dest].name << endl;
+    }*/
+    //generatePossibleFeetPaths(distance);
 }
 
 void Graph::localByName(string name, double distance)
@@ -185,10 +212,16 @@ void Graph::localByName(string name, double distance)
     generatePossibleFeetPaths(distance);
 }
 
-void Graph::destByCoordinates(int x,int y,double distance) {
+void Graph::destByCoordinates(double x, double y, double distance) {
 
-    setNodeInfo(n,"destination","",x,y);
-    generatePossibleFeetPaths(distance);
+    dest = n - 1;
+    setNodeInfo(dest,"destination","",x,y);
+    addCoordinatesEdge(dest,distance);
+    /*for(auto a: nodes[dest].adj)
+    {
+        cout << a.dest << " " << a.line << nodes[a.dest].name << endl;
+    }*/
+    // generatePossibleFeetPaths(distance);
 }
 
 void Graph::destByName(string name, double distance)

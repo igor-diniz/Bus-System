@@ -57,7 +57,7 @@ public:
     void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude);
     void addEdge(int src, int dest, string line, double distance);
     int size() const {return n;}
-    void localByCoordinates(int x,int y,double distance);
+    void localByCoordinates(double x, double y, double distance);
     
 
     pair<double,double> getCoordinates(int node);
@@ -73,13 +73,15 @@ public:
 
     void bfs(int v);
 
-    void destByCoordinates(int x, int y, double distance);
+    void destByCoordinates(double x, double y, double distance);
 
     void destByName(string name, double distance);
 
     list<int> BFSPath();
 
     list<string> bfsPath();
+
+    void addCoordinatesEdge(int i, double d);
 };
 
 #endif
