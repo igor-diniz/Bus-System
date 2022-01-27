@@ -52,7 +52,7 @@ void FileReader::readStop(const string &line, int id){
     getline(reader, zone, ',');
     reader >> latitude >> separator >> longitude;
 
-    graph->setNodeInfo(id, name, zone, latitude, longitude);
+    graph->setNodeInfo(id, name, zone, latitude, longitude,code);
     CodeID->insert({code, id}); // os códigos do ficheiro stops.csv são mapeados para um id
 }
 

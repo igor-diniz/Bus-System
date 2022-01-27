@@ -31,11 +31,12 @@ pair<double, double> Graph::getCoordinates(int node) {
     return {nodes[node].latitude, nodes[node].longitude};
 }
 
-void Graph::setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude) {
+void Graph::setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude, string code) {
     nodes[id].name = name;
     nodes[id].zone = zone;
     nodes[id].latitude = latitude;
     nodes[id].longitude = longitude;
+    nodes[id].code = code;
 }
 
 void Graph::setCodeIDInfos(unordered_map<string, int> &codeID){
@@ -72,12 +73,12 @@ list<int> Graph::dijkstra_path(int a, int b) {
     return path;
 }
 
-list<string> Graph::bfsPath()
+list<int> Graph::bfsPath()
 {
     bfs(src);
-    list<string> path;
+    list<int> path;
     if(!nodes[dest].visited) return path;
-    path.push_back(nodes[dest].name);
+    path.push_back(dest);
    // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
     int v = dest;
     while(v != src)
@@ -85,24 +86,36 @@ list<string> Graph::bfsPath()
         //cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
         cout << nodes[v].name <<  " " << nodes[v].dist << endl;
         v = nodes[v].pred;
-        path.push_front(nodes[v].name);
+        path.push_front(v);
     }
+
+    for(int i : path)
+    {
+        cout << nodes[i].code << " " << nodes[i].name << endl;
+    }
+
     return path;
 }
 
-list<string> Graph::lessDistance()
+list<int> Graph::lessDistance()
 {
     dijkstra(src);
-    list<string> path;
+    list<int> path;
     cout << nodes[dest].dist << endl;
     if (nodes[dest].dist == INF) return path;
-    path.push_back(nodes[dest].name);
+    path.push_back(dest);
     int v = dest;
     while (v != src) {
         v = nodes[v].pred;
         cout << nodes[v].dist << " " << nodes[v].name << endl;
-        path.push_front(nodes[v].name);
+        path.push_front(v);
     }
+
+    for(int i : path)
+    {
+        cout << nodes[i].code << " " << nodes[i].name << endl;
+    }
+
     return path;
 }
 
@@ -183,12 +196,12 @@ void Graph::dijkstra(int s) {
     }
 }
 
-list<string>Graph::lessZonesPath()
+list<int>Graph::lessZonesPath()
 {
     lessZones(src);
-    list<string> path;
+    list<int> path;
     if(!nodes[dest].visited) return path;
-    path.push_back(nodes[dest].name);
+    path.push_back(dest);
     // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
     cout << nodes[dest].dist - 1 << " zone(s) passed" << endl;
     int v = dest;
@@ -198,20 +211,45 @@ list<string>Graph::lessZonesPath()
        // cout << nodes[v].name << endl << nodes[v].zone << endl;
        cout << nodes[v].dist << " " << nodes[v].pred << " " << nodes[v].name << endl;
         v = nodes[v].pred;
-        path.push_front(nodes[v].name);
+        path.push_front(v);
+    }
+
+    for(int i : path)
+    {
+        cout << nodes[i].code << " " << nodes[i].name << endl;
     }
     return path;
 }
 
-/*list<string>Graph::lessLinesPath()
+list<int>Graph::lessLinesPath()
 {
     lessLines(src);
-}*/
+    list<int> path;
+    if(!nodes[dest].visited) return path;
+    path.push_back(dest);
+    // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
+    cout << nodes[dest].dist - 1 << " line(s) passed" << endl;
+    int v = dest;
+    while(v != src)
+    {
+        //cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
+        // cout << nodes[v].name << endl << nodes[v].zone << endl;
+        cout << nodes[v].dist << " " << nodes[v].pred << " " << nodes[v].name  << " " << nodes[v].lineUsed << endl;
+        v = nodes[v].pred;
+        path.push_front(v);
+    }
 
-/*void Graph::lessLines(int s) // fazer
+    for(int i : path)
+    {
+        cout << nodes[i].code << " " << nodes[i].name << endl;
+    }
+    return path;
+}
+
+void Graph::lessLines(int s) // fazer
 {
     MinHeap<int, double> q(n, -1);
-    for (int v=1; v<=n; v++) {
+    for (int v=0; v<n; v++) {
         nodes[v].dist = INF;
         q.insert(v, nodes[v].dist); //priority queue
         nodes[v].visited = false;
@@ -219,33 +257,32 @@ list<string>Graph::lessZonesPath()
     nodes[s].dist = 0;
     q.decreaseKey(s, 0);
     nodes[s].pred = s;
+    int counter = 0;
     while (q.getSize()>0) {
         int u = q.removeMin();
         // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
-        set<string> usedLines;
-        usedLines.clear();
         nodes[u].visited = true;
         for (auto e : nodes[u].adj) {
-            int v = e.dest;
-            if(usedLines.find(e.line) == usedLines.end())
-            {
-                e.weight = 1;
-                usedLines.insert(e.line);
-            }
-            else
-            {
-                e.weight = 0;
-            }
+            if((night && e.isNight) || (!night && !e.isNight)) {
+                int v = e.dest;
+                if (e.line == "feet" && counter != 0 && nodes[v].name != "destination")
+                    e.weight = INF;
+                else if(e.line != nodes[u].lineUsed)
+                    e.weight = 1;
+                else e.weight = 0;
 
-            double w = e.weight;
-            if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
-                nodes[v].dist = nodes[u].dist + w;
-                q.decreaseKey(v, nodes[v].dist);
-                nodes[v].pred = u;
+                double w = e.weight;
+                if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
+                    nodes[v].dist = nodes[u].dist + w;
+                    q.decreaseKey(v, nodes[v].dist);
+                    nodes[v].pred = u;
+                    nodes[v].lineUsed = e.line;
+                }
             }
         }
+        counter = 1;
     }
-}*/
+}
 
 void Graph::lessZones(int s)
 {
@@ -315,7 +352,7 @@ void Graph::bfs(int v) {
 void Graph::localByCoordinates(double x, double y, double distance) {
 
     src = n - 2;
-    setNodeInfo(src,"initial"," ",x,y);
+    setNodeInfo(src,"initial"," ",x,y,"INIT");
     addCoordinatesEdge(src,distance);
     /*for(auto a: nodes[src].adj)
     {
@@ -329,7 +366,7 @@ void Graph::localByName(string name, double distance)
     if(codeID.find(name) == codeID.end()) cerr << "name of the stop is invalid!" << endl;
     src = n - 2;
     cout << nodes[codeID[name]].name << " " << nodes[codeID[name]].latitude << " " << nodes[codeID[name]].longitude << endl;
-    setNodeInfo(src,"origin","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude);
+    setNodeInfo(src,"origin","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude,"ORIG");
     addCoordinatesEdge(src,distance);
     //nodes[n-1] = nodes[codeID[name]];
     //setNodeInfo(n-1,"initial","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
@@ -339,7 +376,7 @@ void Graph::localByName(string name, double distance)
 void Graph::destByCoordinates(double x, double y, double distance) {
 
     dest = n - 1;
-    setNodeInfo(dest,"destination"," ",x,y);
+    setNodeInfo(dest,"destination"," ",x,y,"DEST");
     addCoordinatesEdge(dest,distance);
     /*for(auto a: nodes[dest].adj)
     {
@@ -352,7 +389,7 @@ void Graph::destByName(string &name, double distance)
 {
     if(codeID.find(name) == codeID.end()) cerr << "name of the stop is invalid!" << endl;
     dest = n - 1;
-    setNodeInfo(dest,"destination","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude);
+    setNodeInfo(dest,"destination","",nodes[codeID[name]].latitude,nodes[codeID[name]].longitude,"DEST");
     //nodes[n] = nodes[codeID[name]];
     //setNodeInfo(n,"destination","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
     //generatePossibleFeetPaths(distance);

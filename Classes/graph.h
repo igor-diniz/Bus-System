@@ -34,7 +34,8 @@ class Graph {
         double longitude; //longitude of stops.csv
         double dist; //starts on -1, distancia de um nó a outro (usado no dijkstra)
         int pred; //starts on -1, nó que deu origem (usado no dijkstra)
-        //string code; //code of stops.csv
+        string code; //code of stops.csv
+        string lineUsed;
     };
 
     int n;              // Graph size (vertices are numbered from 1 to n)
@@ -58,7 +59,7 @@ public:
     void setTime(int choice);
 
     // Add edge from source to destination with a certain weight
-    void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude);
+    void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude, string code);
     void addEdge(int src, int dest, string line, double distance, bool isNight = false);
     int size() const {return n;}
     void localByCoordinates(double x, double y, double distance);
@@ -80,15 +81,19 @@ public:
 
     void destByName(string &name, double distance);
 
-    list<string> bfsPath();
+    list<int> bfsPath();
 
     void addCoordinatesEdge(int i, double d);
 
     void lessZones(int s);
 
-    list<string> lessZonesPath();
+    void lessLines(int s);
 
-    list<string> lessDistance();
+    list<int> lessZonesPath();
+
+    list<int> lessDistance();
+
+    list<int> lessLinesPath();
 };
 
 #endif

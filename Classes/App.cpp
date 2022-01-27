@@ -94,9 +94,9 @@ void App::run()
              "|========================================================================|\n";
 
         while (true) {
+            cout << "What is your priority for the rout?" << endl;
             cin >> choice;
 
-            cout << "What is your priority for the rout?" << endl;
             if (cin.fail() || cin.peek() != '\n') {
                 cin.clear();
                 cin.ignore(INT_MAX, '\n');
@@ -105,28 +105,25 @@ void App::run()
             } else break;
         }
 
-        list<string> names;
+        list<int> names;
 
         switch (choice) {
             case 0:
                 exit(0);
             case 1:
-                names = graph->lessDistance();
+                graph->lessDistance();
                 break;
             case 2:
-                names = graph->bfsPath();
+                graph->bfsPath();
                 break;
             case 3:
+                graph->lessLinesPath();
                 break;
             case 4:
-                names = graph->lessZonesPath();
+                graph->lessZonesPath();
                 break;
             default:
                 cout << "invalid choice!" << endl;
-        }
-        cout << "rota:" << endl;
-        for (string &s: names) {
-            cout << s << endl;
         }
     }
 }
