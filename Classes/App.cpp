@@ -16,7 +16,7 @@ void App::run()
 
     double distance;
     while(true) {
-        cout << "Please input the number of meters you are willing to walk between stops if necessary ";
+        cout << "Please input the number of meters you are willing to walk between stops if necessary \n";
         cin >> distance;
 
         if (cin.fail() || cin.peek() != '\n') {
@@ -27,6 +27,20 @@ void App::run()
         }
         else break;
     }
+
+    int choice;
+    while (true) {
+        cout << "Do you want day (0) or night (1) paths? \n";
+        cin >> choice;
+        if (cin.fail() || cin.peek() != '\n') {
+            cin.clear();
+            cin.ignore(INT_MAX, '\n');
+            cout << "Invalid input!" << endl;
+            continue;
+        } else break;
+    }
+
+    graph->setTime(choice);
 
      cout << "give the coordinates (x y) or name of the starting stop : ";
      string name;
@@ -61,40 +75,58 @@ void App::run()
     }
 
 
-    cout <<
-    "|========================================================================|\n"
-    "|                                                                        |\n"
-    "|     ____________  _________  ___   _  _________  ____  ___ __________  |\n"
-    "|    /  _/ __/  _/ /_  __/ _ \/ _ | / |/ / __/ _ \/ __ \/ _ /_  __/ __/  |\n"
-    "|   _/ // _/_/ /    / / / , _/ __ |/    _\ \/ ___/ /_/ / , _// / _\ \    |\n"
-    "|  /___/___/___/   /_/ /_/|_/_/ |_/_/|_/___/_/   \____/_/|_|/_/ /___/    |\n"
-    "|                                                                        |\n"
-    "|                                                                        |\n"
-    "|========================================================================|\n"
-    "|      Shortest rout                   [1]                               |\n"
-    "|      Less stops                      [2]                               |\n"
-    "|      Less bus changes                [3]                               |\n"
-    "|      Cheapest rout                   [4]                               |\n"
-    "|      Return                          [0]                               |\n"
-    "|========================================================================|\n";
-
-    int choice;
     while(true) {
-        cin >> choice;
+        cout <<
+             "|========================================================================|\n"
+             "|                                                                        |\n"
+             "|     ____________  _________  ___   _  _________  ____  ___ __________  |\n"
+             "|    /  _/ __/  _/ /_  __/ _ \\/ _ | / |/ / __/ _ \\/ __ \\/ _ /_  __/ __/  |\n"
+             "|   _/ // _/_/ /    / / / , _/ __ |/    _\\ \\/ ___/ /_/ / , _// / _\\ \\    |\n"
+             "|  /___/___/___/   /_/ /_/|_/_/ |_/_/|_/___/_/   \\____/_/|_|/_/ /___/    |\n"
+             "|                                                                        |\n"
+             "|                                                                        |\n"
+             "|========================================================================|\n"
+             "|      Shortest rout                   [1]                               |\n"
+             "|      Less stops                      [2]                               |\n"
+             "|      Less bus changes                [3]                               |\n"
+             "|      Cheapest rout                   [4]                               |\n"
+             "|      Exit                            [0]                               |\n"
+             "|========================================================================|\n";
 
-        cout << "What is your priority for the rout?" << endl;
-        if (cin.fail() || cin.peek() != '\n') {
-            cin.clear();
-            cin.ignore(INT_MAX, '\n');
-            cout << "Invalid input!" << endl;
-            continue;
+        while (true) {
+            cin >> choice;
+
+            cout << "What is your priority for the rout?" << endl;
+            if (cin.fail() || cin.peek() != '\n') {
+                cin.clear();
+                cin.ignore(INT_MAX, '\n');
+                cout << "Invalid input!" << endl;
+                continue;
+            } else break;
         }
-        else break;
-    }
 
-    switch(choice)
-    {
-        //
-    }
+        list<string> names;
 
+        switch (choice) {
+            case 0:
+                exit(0);
+            case 1:
+                names = graph->lessDistance();
+                break;
+            case 2:
+                names = graph->bfsPath();
+                break;
+            case 3:
+                break;
+            case 4:
+                names = graph->lessZonesPath();
+                break;
+            default:
+                cout << "invalid choice!" << endl;
+        }
+        cout << "rota:" << endl;
+        for (string &s: names) {
+            cout << s << endl;
+        }
+    }
 }

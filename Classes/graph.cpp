@@ -16,12 +16,12 @@ Graph::Graph(int num, bool dir) : n(num), hasDir(dir), nodes(num+1) {
 }
 
 // Add edge from source to destination with a certain weight
-void Graph::addEdge(int src, int dest, string line, double distance) {
+void Graph::addEdge(int src, int dest, string line, double distance, bool isNight) {
     if (src<0 || src>n-1 || dest<0 || dest>n-1){
         cout << "Can't add the edge." << endl;
         return;
     }
-    nodes[src].adj.push_back({dest, distance, line});
+    nodes[src].adj.push_back({dest, distance, line,isNight});
     if (!hasDir) nodes[dest].adj.push_back({src, distance});
     //edges.push_back({src, {dest, distance}});
 }
@@ -82,8 +82,8 @@ list<string> Graph::bfsPath()
     int v = dest;
     while(v != src)
     {
-        /*cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
-        cout << nodes[v].name << endl;*/
+        //cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
+        cout << nodes[v].name <<  " " << nodes[v].dist << endl;
         v = nodes[v].pred;
         path.push_front(nodes[v].name);
     }
@@ -132,7 +132,7 @@ void Graph::generatePossibleFeetPaths(double distance)
                     pair2.first, pair2.second);
 
             if(d <= distance)
-                addEdge(i, j, "feet", d);
+                addEdge(i, j, "feet", d,night);
         }
     }
 }
@@ -148,8 +148,8 @@ void Graph::addCoordinatesEdge(int v, double distance)
                 pair2.first, pair2.second);
         if(d <= distance && v != i)
         {
-            addEdge(i, v, "feet", d);
-            addEdge(v, i, "feet", d);
+            addEdge(i, v, "feet", d,night);
+            addEdge(v, i, "feet", d,night);
         }
     }
 }
@@ -170,12 +170,14 @@ void Graph::dijkstra(int s) {
         // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
         nodes[u].visited = true;
         for (auto &e : nodes[u].adj) {
-            int v = e.dest;
-            double w = e.weight;
-            if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
-                nodes[v].dist = nodes[u].dist + w;
-                q.decreaseKey(v, nodes[v].dist);
-                nodes[v].pred = u;
+            if((night && e.isNight) || (!night && !e.isNight)) {
+                int v = e.dest;
+                double w = e.weight;
+                if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
+                    nodes[v].dist = nodes[u].dist + w;
+                    q.decreaseKey(v, nodes[v].dist);
+                    nodes[v].pred = u;
+                }
             }
         }
     }
@@ -188,12 +190,13 @@ list<string>Graph::lessZonesPath()
     if(!nodes[dest].visited) return path;
     path.push_back(nodes[dest].name);
     // cout << nodes[src].latitude << " " << nodes[src].longitude << endl;
-    cout << nodes[dest].dist + 1 << " zone(s) passed" << endl;
+    cout << nodes[dest].dist - 1 << " zone(s) passed" << endl;
     int v = dest;
     while(v != src)
     {
        //cout << nodes[v].latitude << " " << nodes[v].longitude << endl;
-        cout << nodes[v].name << endl << nodes[v].zone << endl;
+       // cout << nodes[v].name << endl << nodes[v].zone << endl;
+       cout << nodes[v].dist << " " << nodes[v].pred << " " << nodes[v].name << endl;
         v = nodes[v].pred;
         path.push_front(nodes[v].name);
     }
@@ -247,7 +250,7 @@ list<string>Graph::lessZonesPath()
 void Graph::lessZones(int s)
 {
     MinHeap<int, double> q(n, -1);
-    for (int v=1; v<=n; v++) {
+    for (int v=0; v<n; v++) {
         nodes[v].dist = INF;
         q.insert(v, nodes[v].dist); //priority queue
         nodes[v].visited = false;
@@ -255,23 +258,27 @@ void Graph::lessZones(int s)
     nodes[s].dist = 0;
     q.decreaseKey(s, 0);
     nodes[s].pred = s;
+    string lastZone;
     while (q.getSize()>0) {
         int u = q.removeMin();
         // cout << "Node " << u << " with dist = " << nodes[u].dist << endl;
         nodes[u].visited = true;
+        if(nodes[u].zone != " ") lastZone = nodes[u].zone;
         for (auto e : nodes[u].adj) {
-            int v = e.dest;
-            if(nodes[v].zone == nodes[u].zone)
-                e.weight = 0;
+            if((night && e.isNight) || (!night && !e.isNight)) {
+                int v = e.dest;
+                if (nodes[v].zone == lastZone)
+                    e.weight = 0;
 
-            else
-                e.weight = 1;
+                else
+                    e.weight = 1;
 
-            double w = e.weight;
-            if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
-                nodes[v].dist = nodes[u].dist + w;
-                q.decreaseKey(v, nodes[v].dist);
-                nodes[v].pred = u;
+                double w = e.weight;
+                if (!nodes[v].visited && nodes[u].dist + w < nodes[v].dist) {
+                    nodes[v].dist = nodes[u].dist + w;
+                    q.decreaseKey(v, nodes[v].dist);
+                    nodes[v].pred = u;
+                }
             }
         }
     }
@@ -292,11 +299,13 @@ void Graph::bfs(int v) {
         int u = q.front(); q.pop(); // remove first element of q
       //  cout << u << " "; // show node order
         for (auto &e : nodes[u]. adj) {
-            int w = e.dest;
-            if (! nodes[w]. visited) { // new node!
-                q.push(w);
-                nodes[w]. visited = true ;
-                nodes[w].pred = u;
+            if((night && e.isNight) || (!night && !e.isNight)) {
+                int w = e.dest;
+                if (!nodes[w].visited) { // new node!
+                    q.push(w);
+                    nodes[w].visited = true;
+                    nodes[w].pred = u;
+                }
             }
         }
     }
@@ -306,7 +315,7 @@ void Graph::bfs(int v) {
 void Graph::localByCoordinates(double x, double y, double distance) {
 
     src = n - 2;
-    setNodeInfo(src,"initial","",x,y);
+    setNodeInfo(src,"initial"," ",x,y);
     addCoordinatesEdge(src,distance);
     /*for(auto a: nodes[src].adj)
     {
@@ -330,7 +339,7 @@ void Graph::localByName(string name, double distance)
 void Graph::destByCoordinates(double x, double y, double distance) {
 
     dest = n - 1;
-    setNodeInfo(dest,"destination","",x,y);
+    setNodeInfo(dest,"destination"," ",x,y);
     addCoordinatesEdge(dest,distance);
     /*for(auto a: nodes[dest].adj)
     {
@@ -339,7 +348,7 @@ void Graph::destByCoordinates(double x, double y, double distance) {
     // generatePossibleFeetPaths(distance);
 }
 
-void Graph::destByName(string name, double distance)
+void Graph::destByName(string &name, double distance)
 {
     if(codeID.find(name) == codeID.end()) cerr << "name of the stop is invalid!" << endl;
     dest = n - 1;
@@ -348,6 +357,11 @@ void Graph::destByName(string name, double distance)
     //setNodeInfo(n,"destination","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
     //generatePossibleFeetPaths(distance);
     addCoordinatesEdge(dest,distance);
+}
+
+void Graph::setTime(int choice) {
+    if(choice == 1) night = true;
+    else night = false;
 }
 
 

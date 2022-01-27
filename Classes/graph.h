@@ -20,8 +20,8 @@ class Graph {
         int dest;   // Destination node, read from LINE_CODE_DIR.CSV
         double weight; // An integer weight, default value, talvez distãncia entre eles?
         string line; // line cod from lines.csv
+        bool isNight; // se a linha é noturna
         //string name; // name from lines.csv
-        //bool isNight; // se a linha é noturna
     };
 
     struct Node {
@@ -43,6 +43,7 @@ class Graph {
     unordered_map<string, int> codeID; // codigo da parada e seu id
     unordered_map<string, string> codeNameOfLines; // codigo da linha e seu nome
     int dest,src;
+    bool night;
 
     void dijkstra(int s);
     double applyHaversine(double lat1, double lon1, double lat2, double lon2);
@@ -54,9 +55,11 @@ public:
     void setCodeIDInfos(unordered_map<string, int> &codeID);
     void setCodeNameOfLinesInfos( unordered_map<string, string> &codeNameOfLines);
 
+    void setTime(int choice);
+
     // Add edge from source to destination with a certain weight
     void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude);
-    void addEdge(int src, int dest, string line, double distance);
+    void addEdge(int src, int dest, string line, double distance, bool isNight = false);
     int size() const {return n;}
     void localByCoordinates(double x, double y, double distance);
     
@@ -75,7 +78,7 @@ public:
 
     void destByCoordinates(double x, double y, double distance);
 
-    void destByName(string name, double distance);
+    void destByName(string &name, double distance);
 
     list<string> bfsPath();
 

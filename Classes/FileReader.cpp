@@ -114,6 +114,11 @@ void FileReader::readPaths() {
 void FileReader::readPath(const string& line, ifstream &file) {
     int num; file >> num;
     string source; file >> source;
+    bool isNight = false;
+    if(line.back() == 'M')
+    {
+        isNight = true;
+    }
 
     for(int i = 0; i < num - 1; i++){
         string dest; file >> dest;
@@ -127,7 +132,8 @@ void FileReader::readPath(const string& line, ifstream &file) {
                 applyHaversine(
                         pair1.first, pair1.second,
                         pair2.first, pair2.second
-                ));
+                ),
+                isNight);
 
         source = dest;
     }
