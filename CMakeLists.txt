@@ -7,10 +7,9 @@ include_directories(Classes)
 
 add_executable(Bus_System main.cpp
         Classes/minHeap.h
-        Classes/minHeap.cpp
         Classes/graph.h
         Classes/graph.cpp
         Classes/App.h
         Classes/App.cpp
         Classes/FileReader.cpp
-        Classes/FileReader.h Classes/LinesGraph.cpp Classes/LinesGraph.h)
+        Classes/FileReader.h)

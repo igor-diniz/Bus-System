@@ -10,31 +10,31 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <unordered_set>
 
 using namespace std;
 
 class Graph {
-    struct Edge { //os edges vão ser criados dos ficheiros LINE_CODE_DIR.CSV,
-                    //sendo line = CODE
-                    //
-        int dest;   // Destination node, read from LINE_CODE_DIR.CSV
-        double weight; // An integer weight, default value, talvez distãncia entre eles?
-        string line; // line cod from lines.csv
-        bool isNight; // se a linha é noturna
-        //string name; // name from lines.csv
+    struct Edge {
+
+        int dest;
+        double weight;
+        string line;
+        bool isNight;
+        bool removed = false;
     };
 
     struct Node {
 
-        list<Edge> adj; // The list of outgoing edges (to adjacent nodes)
-        bool visited; //starts on false
-        string name; //name of stops.csv
-        string zone; //zone of stops.csv
-        double latitude; //latitude of stops.csv
-        double longitude; //longitude of stops.csv
-        double dist; //starts on -1, distancia de um nó a outro (usado no dijkstra)
-        int pred; //starts on -1, nó que deu origem (usado no dijkstra)
-        string code; //code of stops.csv
+        list<Edge> adj;
+        bool visited;
+        string name;
+        string zone;
+        double latitude;
+        double longitude;
+        double dist;
+        int pred;
+        string code;
         string lineUsed;
         bool removed = false;
     };
@@ -43,64 +43,38 @@ class Graph {
     bool hasDir;        // false: undirect; true: directed
     vector<Node> nodes; // The list of nodes being represented
     unordered_map<string, int> codeID; // codigo da parada e seu id
-    unordered_map<string, string> codeNameOfLines; // codigo da linha e seu nome
     int dest,src;
-    bool night;
+    bool night = false;
 
-    void dijkstra(int s);
+    void lessDistance(int source);
     double applyHaversine(double lat1, double lon1, double lat2, double lon2);
 
 public:
-    // Constructor: nr nodes and direction (default: undirected)
+
     Graph()= default;
-    Graph(int nodes, bool dir = false);
+    explicit Graph(int nodes, bool dir = false);
     void setCodeIDInfos(unordered_map<string, int> &codeID);
-    void setCodeNameOfLinesInfos( unordered_map<string, string> &codeNameOfLines);
-
-    void setTime(int choice);
-
-    // Add edge from source to destination with a certain weight
+    void changeTime();
     void setNodeInfo(int id, const string &name, const string &zone, double latitude, double longitude, string code);
-    void addEdge(int src, int dest, string line, double distance, bool isNight = false);
+    void addEdge(int source, int destination, string line, double distance, bool isNight = false);
     int size() const {return n;}
     void localByCoordinates(double x, double y, double distance);
-    
-
     pair<double,double> getCoordinates(int node);
     void generatePossibleFeetPaths(double distance);
-
-    // ----- Functions to implement in this class -----
-    int dijkstra_distance(int a, int b);
-    list<int> dijkstra_path(int a, int b);
-
-    void localByName(string name, double distance);
-
-
-    void bfs(int v);
-
+    void localByName(string &name, double distance);
+    void lessStops(int v);
     void destByCoordinates(double x, double y, double distance);
-
     void destByName(string &name, double distance);
-
-    list<int> bfsPath();
-
+    void lessStopsPath();
     void addCoordinatesEdge(int i, double d);
-
     void lessZones(int s);
-
-    void lessLines(int s);
-
-    list<int> lessZonesPath();
-
-    list<int> lessDistance();
-
-    list<int> lessLinesPath();
-
-    double primForPRT1(int r);
-
-    void removeStop(string name);
-
-    list<Edge> getEdges(int node);
+    void lessLines(int source);
+    void lessZonesPath();
+    void lessDistancePath();
+    void lessLinesPath();
+    double primForGDM1();
+    void removeStop(string &name);
+    void removeLine(unordered_set<string> stringSet);
 };
 
 #endif

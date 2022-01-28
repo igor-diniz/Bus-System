@@ -11,12 +11,14 @@
 class App
 {
     Graph* graph;
-    LinesGraph* linesGraph;
     FileReader fileReader = FileReader();
 public:
-    App() {fileReader.load(); graph = fileReader.getGraph(); linesGraph = fileReader.getLinesGraph(); run();};
+    App() {fileReader.load(); graph = fileReader.getGraph(); run();};
     void run();
 
+    void removeStop();
+
+    void removeLine();
 };
 
 #endif //BUS_SYSTEM_APP_H

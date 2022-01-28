@@ -18,8 +18,8 @@ int main(void) {
     g->localByName("ERM3",200);
     g->destByName("1AL2",200);
     a = g->lessZonesPath(); // menos zonas
-    a = g->bfsPath(); // menos paragens
-    a = g->lessDistance(); // menor distancia
+    a = g->lessStopsPath(); // menos paragens
+    a = g->lessDistancePath(); // menor distancia
 
     for(auto i: a)
     {

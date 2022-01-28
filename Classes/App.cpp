@@ -3,27 +3,17 @@
 //
 
 #include <algorithm>
+#include <unordered_set>
 #include "App.h"
 
 bool is_number(const std::string& s)
 {
     return !s.empty() && std::find_if(s.begin(),
-                                      s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+                                      s.end(), [](unsigned char c) { return !std::isdigit(c) && c != '.'; }) == s.end();
 }
 
 void App::run()
 {
-
-    //cout << graph->primForPRT1(1) << endl;
-
-    cout << "Do you want to remove any stops? if yes, write their code (ex: ERM3) separated by a space and type 0 to continue" << endl;
-    string removed;
-
-    while(cin >> removed)
-    {
-        if(removed == "0") break;
-        graph->removeStop(removed);
-    }
 
     double distance;
     while(true) {
@@ -39,20 +29,6 @@ void App::run()
         else break;
     }
 
-    int choice;
-    while (true) {
-        cout << "Do you want day (0) or night (1) paths? \n";
-        cin >> choice;
-        if (cin.fail() || cin.peek() != '\n') {
-            cin.clear();
-            cin.ignore(INT_MAX, '\n');
-            cout << "Invalid input!" << endl;
-            continue;
-        } else break;
-    }
-
-    graph->setTime(choice);
-
      cout << "give the coordinates (x y) or name of the starting stop : ";
      string name;
      cin >> name;
@@ -60,8 +36,8 @@ void App::run()
 
      if(is_number(name))
      {
-         int y;
-         int x = stoi(name); cin >> y;
+         double y;
+         double x = stod(name); cin >> y;
          graph->localByCoordinates(x,y,distance);
      } //in case user puts a coordinate x,y
      else
@@ -75,8 +51,8 @@ void App::run()
 
     if(is_number(name))
     {
-        int y;
-        int x = stoi(name); cin >> y;
+        double y;
+        double x = stod(name); cin >> y;
         graph->destByCoordinates(x,y,distance);
     } //in case user puts a coordinate x,y
 
@@ -97,13 +73,18 @@ void App::run()
              "|                                                                        |\n"
              "|                                                                        |\n"
              "|========================================================================|\n"
-             "|      Shortest rout                   [1]                               |\n"
+             "|      Less distance                   [1]                               |\n"
              "|      Less stops                      [2]                               |\n"
              "|      Less bus changes                [3]                               |\n"
              "|      Cheapest rout                   [4]                               |\n"
+             "|      Change ride time (day/night)    [5]                               |\n"
+             "|      Avoid a stop                    [6]                               |\n"
+             "|      Avoid a line                    [7]                               |\n"
+             "|      show MST for GDM1               [8]                               |\n"
              "|      Exit                            [0]                               |\n"
              "|========================================================================|\n";
-
+        int choice;
+        cin.ignore(INT_MAX, '\n');
         while (true) {
             cout << "What is your priority for the rout?" << endl;
             cin >> choice;
@@ -116,16 +97,14 @@ void App::run()
             } else break;
         }
 
-        list<int> names;
-
         switch (choice) {
             case 0:
                 exit(0);
             case 1:
-                graph->lessDistance();
+                graph->lessDistancePath();
                 break;
             case 2:
-                graph->bfsPath();
+                graph->lessStopsPath();
                 break;
             case 3:
                 graph->lessLinesPath();
@@ -133,8 +112,46 @@ void App::run()
             case 4:
                 graph->lessZonesPath();
                 break;
+            case 5:
+                graph->changeTime();
+                break;
+            case 6:
+                removeStop();
+                break;
+            case 7:
+                removeLine();
+                break;
+            case 8:
+                graph->primForGDM1();
+                break;
             default:
                 cout << "invalid choice!" << endl;
         }
+    }
+}
+
+void App::removeStop()
+{
+    cout << "Do you want to remove any stops? if yes, write their code (ex: ERM3) separated by a space and type 0 to continue" << endl;
+    string removed;
+
+    while(cin >> removed)
+    {
+        if(removed == "0") break;
+        graph->removeStop(removed);
+    }
+}
+
+void App::removeLine()
+{
+    cout << "Do you want to remove any lines? if yes, write their code (ex: 303) separated by a space and type 0 to continue" << endl;
+    string removed;
+    unordered_set <string> stringSet;
+
+    while(cin >> removed)
+    {
+        if(removed == "0")
+        {graph->removeLine(stringSet) ;break;}
+        stringSet.insert(removed);
     }
 }
