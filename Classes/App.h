@@ -11,9 +11,10 @@
 class App
 {
     Graph* graph;
-    FileReader fileReader;
+    LinesGraph* linesGraph;
+    FileReader fileReader = FileReader();
 public:
-    App() {graph = fileReader.load();};
+    App() {fileReader.load(); graph = fileReader.getGraph(); linesGraph = fileReader.getLinesGraph(); run();};
     void run();
 
 };

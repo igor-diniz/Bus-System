@@ -13,4 +13,4 @@ add_executable(Bus_System main.cpp
         Classes/App.h
         Classes/App.cpp
         Classes/FileReader.cpp
-        Classes/FileReader.h)
+        Classes/FileReader.h Classes/LinesGraph.cpp Classes/LinesGraph.h)

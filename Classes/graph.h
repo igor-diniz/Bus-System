@@ -36,6 +36,7 @@ class Graph {
         int pred; //starts on -1, nó que deu origem (usado no dijkstra)
         string code; //code of stops.csv
         string lineUsed;
+        bool removed = false;
     };
 
     int n;              // Graph size (vertices are numbered from 1 to n)
@@ -94,6 +95,12 @@ public:
     list<int> lessDistance();
 
     list<int> lessLinesPath();
+
+    double primForPRT1(int r);
+
+    void removeStop(string name);
+
+    list<Edge> getEdges(int node);
 };
 
 #endif

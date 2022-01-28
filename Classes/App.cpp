@@ -14,6 +14,17 @@ bool is_number(const std::string& s)
 void App::run()
 {
 
+    //cout << graph->primForPRT1(1) << endl;
+
+    cout << "Do you want to remove any stops? if yes, write their code (ex: ERM3) separated by a space and type 0 to continue" << endl;
+    string removed;
+
+    while(cin >> removed)
+    {
+        if(removed == "0") break;
+        graph->removeStop(removed);
+    }
+
     double distance;
     while(true) {
         cout << "Please input the number of meters you are willing to walk between stops if necessary \n";

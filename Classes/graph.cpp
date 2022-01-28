@@ -73,6 +73,49 @@ list<int> Graph::dijkstra_path(int a, int b) {
     return path;
 }
 
+double Graph::primForPRT1(int r) {
+    MinHeap<int, double> heap(n, -1);
+    for(int i = 0; i < n; i++){
+        nodes[i].dist = INF;
+        nodes[i].pred = -1;
+        heap.insert(i, nodes[i].dist);
+    }
+    nodes[r].dist = 0;
+    heap.decreaseKey(r,0);
+
+    while(heap.getSize() > 0){
+        int smallest = heap.removeMin();
+       // cout << nodes[smallest].zone << endl;
+        if(nodes[smallest].zone != "PRT1") continue;
+        for(auto &edge : nodes[smallest].adj){
+            if(heap.hasKey(edge.dest)
+               && edge.weight < nodes[edge.dest].dist){
+                nodes[edge.dest].pred = smallest;
+                nodes[edge.dest].dist = edge.weight;
+                heap.decreaseKey(edge.dest, edge.weight);
+            }
+        }
+    }
+
+    double result = 0;
+    for(const auto &node : nodes){
+        if(node.pred != -1)
+            result += node.dist;
+    }
+    return result;
+}
+
+void Graph::removeStop(string name)
+{
+    nodes[codeID[name]].removed = true;
+    nodes[codeID[name]].adj.clear();
+    nodes[codeID[name]].longitude = 0;
+    nodes[codeID[name]].latitude = 0;
+    nodes[codeID[name]].zone = "";
+    nodes[codeID[name]].name = "REMOVED";
+}
+
+
 list<int> Graph::bfsPath()
 {
     bfs(src);
@@ -335,10 +378,10 @@ void Graph::bfs(int v) {
     while (!q.empty ()) { // while there are still unprocessed nodes
         int u = q.front(); q.pop(); // remove first element of q
       //  cout << u << " "; // show node order
-        for (auto &e : nodes[u]. adj) {
+        for (auto &e : nodes[u].adj) {
             if((night && e.isNight) || (!night && !e.isNight)) {
                 int w = e.dest;
-                if (!nodes[w].visited) { // new node!
+                if (!nodes[w].visited && !nodes[w].removed) { // new node!
                     q.push(w);
                     nodes[w].visited = true;
                     nodes[w].pred = u;
@@ -394,11 +437,16 @@ void Graph::destByName(string &name, double distance)
     //setNodeInfo(n,"destination","",nodes[codeID.at(name)].latitude,nodes[codeID.at(name)].longitude);
     //generatePossibleFeetPaths(distance);
     addCoordinatesEdge(dest,distance);
+
 }
 
 void Graph::setTime(int choice) {
     if(choice == 1) night = true;
     else night = false;
+}
+
+list<Graph::Edge> Graph::getEdges(int node) {
+    return nodes[node].adj;
 }
 
 
