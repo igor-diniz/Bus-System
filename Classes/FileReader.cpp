@@ -154,15 +154,15 @@ void FileReader::readPath(const string& line, ifstream &file) {
     }
 }
 
-Graph* FileReader::load() {
+void FileReader::load() {
     readStops();
     readLines();
     readPaths();
     loadLinesGraph();
     //calculatePossibleFeetPaths(0); // isso ainda vai ser pedido pro usuario, tlvz dps mande isso pro graph
+    linesGraph->setLinesID(linesID);
     graph->setCodeIDInfos(*CodeID);
     graph->setCodeNameOfLinesInfos(codeNameOfLines);
-    return graph;
 }
 
 void FileReader::loadLinesGraph() {
@@ -176,13 +176,14 @@ void FileReader::loadLinesGraph() {
                 if(e1.line == "11M" && e2.line == "901") {
                     //cout << e1.dest << endl;
                 }
-                linesConnections.insert({{e1.line, e2.line}, e1.dest});
+                linesGraph->addEdge(linesID->at(e1.line), linesID->at(e2.line), e1.dest,e1.isNight, e1.line);
+                //linesConnections.insert({{e1.line, e2.line}, e1.dest});
             }
         }
     }
 
-    for(const auto& c : linesConnections)
-        linesGraph->addEdge(linesID->at(c.first.first), linesID->at(c.first.second), c.second);
+   /* for(const auto& c : linesConnections)
+        linesGraph->addEdge(linesID->at(c.first.first), linesID->at(c.first.second), c.second); */
 }
 
 /*void FileReader::calculatePossibleFeetPaths(double distance) {

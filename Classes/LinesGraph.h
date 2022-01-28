@@ -7,6 +7,7 @@
 #include <set>
 #include <list>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 
@@ -15,24 +16,35 @@ class LinesGraph {
     struct Edge{
         int dest; // Destination Line ID
         set<int> stop;
+        bool isNight;
     };
 
     struct Node{
         list<Edge> adj; // Connections with others lines
-        int distance;
-        int pred;
-        bool visited;
+        int dist = -1;
+        int pred = -1;
+        bool visited = false;
+        string name;
     };
 
     int n;
     vector<Node> nodes;
+    bool night;
+    unordered_map<string, int>* linesID;
 
 public:
     LinesGraph() = default;
-    LinesGraph(int num);
+    explicit LinesGraph(int num);
 
-    void addEdge(int src, int dest, int byStop);
+    void setLinesID(unordered_map<string, int>*& linesIDs) {this->linesID = linesIDs;}
 
+    void addEdge(int src, int dest, int byStop, bool isNight, string name1);
+
+    void setTime(int choice);
+
+    void bfs(int v);
+
+    list<int> bfsPath(int src, int dest);
 };
 
 

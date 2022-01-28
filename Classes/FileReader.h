@@ -26,7 +26,7 @@ class FileReader {
     //void calculatePossibleFeetPaths(double distance);
 public:
     FileReader();
-    Graph* load();
+    void load();
 
     double applyHaversine(double lat1, double lon1, double lat2, double lon2);
 
