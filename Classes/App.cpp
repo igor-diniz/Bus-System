@@ -39,7 +39,7 @@ void App::run()
         else break;
     }
      wait();
-     cout << "Input the coordinates (x,y) or name of the starting stop: \n";
+     cout << "Input the coordinates (x,y) or code of the starting stop: \n";
      string name;
      cin >> name;
 
@@ -54,7 +54,7 @@ void App::run()
          graph->localByName(name,distance);
      }
     wait();
-    cout << "Input the coordinates (x,y) or name of the destination stop: \n";
+    cout << "Input the coordinates (x,y) or code of the destination stop: \n";
     cin >> name;
 
     if(is_number(name))
