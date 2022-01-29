@@ -1,7 +1,3 @@
-//
-// Created by duart on 24/01/2022.
-//
-
 #include <algorithm>
 #include <unordered_set>
 #include <chrono>
@@ -166,5 +162,5 @@ void App::removeLine()
         stringSet.insert(removed);
     }
     wait();
-    cout << "All stops removed!" << endl;
+    cout << "All lines removed!" << endl;
 }
