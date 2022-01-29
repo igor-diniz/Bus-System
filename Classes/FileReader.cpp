@@ -17,7 +17,7 @@ FileReader::FileReader() {
     int numberStops = calculateNumberOfStops();
 
     graph = new Graph(calculateNumberOfStops() + 2, true); // 2 a mais pq esses espaços vao ser usados para os calculos
-    CodeID = new unordered_map<string, int>(numberStops);
+    codeID = new unordered_map<string, int>(numberStops);
 }
 
 string FileReader::path = "../dataset/";
@@ -51,7 +51,7 @@ void FileReader::readStop(const string &line, int id){
     reader >> latitude >> separator >> longitude;
 
     graph->setNodeInfo(id, name, zone, latitude, longitude,code);
-    CodeID->insert({code, id}); // os códigos do ficheiro stops.csv são mapeados para um id
+    codeID->insert({code, id}); // os códigos do ficheiro stops.csv são mapeados para um id
 }
 
 void FileReader::readLines() {
@@ -62,14 +62,12 @@ void FileReader::readLines() {
 
     getline(file, fileContent); //primeira linha ignorada
 
-    int lineID = 0;
-
     while(getline(file, fileContent)){
-        readLine(fileContent, lineID++);
+        readLine(fileContent);
     }
 }
 
-void FileReader::readLine(const string &line, int id) {
+void FileReader::readLine(const string &line) {
     istringstream reader(line);
     string code, name;
 
@@ -77,7 +75,6 @@ void FileReader::readLine(const string &line, int id) {
     getline(reader, name);
 
     codeNameOfLines.insert({code, name});
-    lines.push_back(code);
 }
 
 double FileReader::applyHaversine(double lat1, double lon1, double lat2, double lon2){
@@ -121,8 +118,8 @@ void FileReader::readPath(const string& line, ifstream &file) {
 
     for(int i = 0; i < num - 1; i++){
         string dest; file >> dest;
-        int sourceID = CodeID->at(source);
-        int destID = CodeID->at(dest);
+        int sourceID = codeID->at(source);
+        int destID = codeID->at(dest);
 
         auto pair1 = graph->getCoordinates(sourceID);
         auto pair2 = graph->getCoordinates(destID);
@@ -142,7 +139,7 @@ void FileReader::load() {
     readStops();
     readLines();
     readPaths();
-    graph->setCodeIDInfos(*CodeID);
+    graph->setCodeIDInfos(*codeID);
 }
 
 
