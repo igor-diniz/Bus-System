@@ -1,4 +1,3 @@
-
 #ifndef BUS_SYSTEM_APP_H
 #define BUS_SYSTEM_APP_H
 

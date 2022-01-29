@@ -88,14 +88,14 @@ void Graph::addCoordinatesEdge(int v, double distance)
 }
 
 void Graph::localByCoordinates(double x, double y, double distance) {
-
+    cout << "These are the stops you can walk to: "<< endl;
     src = n - 2;
     setNodeInfo(src,"origin","",x,y,"ORIG");
     generatePossibleFeetPaths(distance);
     addCoordinatesEdge(src,distance);
     for(auto &a: nodes[src].adj)
     {
-        cout << a.dest << " " << a.line << nodes[a.dest].name << endl;
+        cout << nodes[a.dest].code  << " " << nodes[a.dest].name  << endl;
     }
 }
 

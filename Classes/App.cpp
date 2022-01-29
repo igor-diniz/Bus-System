@@ -1,9 +1,7 @@
-//
-// Created by duart on 24/01/2022.
-//
-
 #include <algorithm>
 #include <unordered_set>
+#include <chrono>
+#include <thread>
 #include "App.h"
 
 bool is_number(const std::string& s)
@@ -12,12 +10,20 @@ bool is_number(const std::string& s)
                                       s.end(), [](unsigned char c) { return !std::isdigit(c) && c != '.'; }) == s.end();
 }
 
+void wait(){
+    using namespace std::this_thread;
+    using namespace std::chrono;
+    sleep_for(seconds(1));
+}
+
 void App::run()
 {
 
     double distance;
     while(true) {
-        cout << "Please input the number of meters you are willing to walk between stops if necessary \n";
+        cout << "Welcome to the IEI Transports System! \n";
+        wait();
+        cout << "Please input the number of meters you are willing to walk between stops if necessary: \n";
         cin >> distance;
 
         if (cin.fail() || cin.peek() != '\n') {
@@ -28,11 +34,10 @@ void App::run()
         }
         else break;
     }
-
-     cout << "give the coordinates (x y) or name of the starting stop : ";
+     wait();
+     cout << "Input the coordinates (x,y) or code of the starting stop: \n";
      string name;
      cin >> name;
-    cout << endl;
 
      if(is_number(name))
      {
@@ -44,10 +49,9 @@ void App::run()
      {
          graph->localByName(name,distance);
      }
-
-    cout << "give the coordinates (x y) or name of the destination stop : ";
+    wait();
+    cout << "Input the coordinates (x,y) or code of the destination stop: \n";
     cin >> name;
-    cout << endl;
 
     if(is_number(name))
     {
@@ -63,6 +67,7 @@ void App::run()
 
 
     while(true) {
+        wait();
         cout <<
              "|========================================================================|\n"
              "|                                                                        |\n"
@@ -125,14 +130,14 @@ void App::run()
                 graph->primForGDM1();
                 break;
             default:
-                cout << "invalid choice!" << endl;
+                cout << "Invalid choice!" << endl;
         }
     }
 }
 
 void App::removeStop()
 {
-    cout << "Do you want to remove any stops? if yes, write their code (ex: ERM3) separated by a space and type 0 to continue" << endl;
+    cout << "Do you want to remove any stops? If so, write their code (ex: ERM3) separated by a space and add 0 to continue" << endl;
     string removed;
 
     while(cin >> removed)
@@ -140,11 +145,13 @@ void App::removeStop()
         if(removed == "0") break;
         graph->removeStop(removed);
     }
+    wait();
+    cout << "All stops removed!" << endl;
 }
 
 void App::removeLine()
 {
-    cout << "Do you want to remove any lines? if yes, write their code (ex: 303) separated by a space and type 0 to continue" << endl;
+    cout << "Do you want to remove any lines? If so, write their code (ex: 303) separated by a space and add 0 to continue" << endl;
     string removed;
     unordered_set <string> stringSet;
 
@@ -154,4 +161,6 @@ void App::removeLine()
         {graph->removeLine(stringSet) ;break;}
         stringSet.insert(removed);
     }
+    wait();
+    cout << "All lines removed!" << endl;
 }

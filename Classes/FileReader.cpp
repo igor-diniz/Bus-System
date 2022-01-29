@@ -1,5 +1,4 @@
 #include "FileReader.h"
-
 #include <string>
 #include <fstream>
 #include <sstream>
